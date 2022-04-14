@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Code;
 using com.enemyhideout.fsm;
+using GameDemo;
 using UnityEditorInternal;
 using UnityEngine;
 
@@ -19,16 +20,10 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 _forceThisFrame;
 
-    public enum PlayerStates
-    {
-        OnGround,
-        Jumping
-    }
-
-    private EnemyFsm<PlayerStates> _fsm;
+    private EnemyFsm<MoveStates> _fsm;
     void Start()
     {
-        _fsm = new EnemyFsm<PlayerStates>(this);
+        _fsm = new EnemyFsm<MoveStates>(this);
         _rigidBody = GetComponent<Rigidbody2D>();
     }
 
@@ -44,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
         hasMoved = UnitCore.MoveIfKeyPressed(KeyCode.RightArrow, _rigidBody, new Vector2(walkForce, 0.0f), hasMoved, ref _forceThisFrame);
         UnitCore.MoveIfKeyPressed(KeyCode.LeftArrow, _rigidBody, new Vector2(-walkForce, 0.0f), hasMoved, ref _forceThisFrame);
         UnitCore.OrientUnitBasedOnXVelocity(visualRoot, _rigidBody);
-        UnitCore.ChangeStateIfKeyPressed(KeyCode.Space, _fsm, PlayerStates.Jumping);
+        UnitCore.ChangeStateIfKeyPressed(KeyCode.Space, _fsm, MoveStates.Jumping);
     }
 
     void Jumping_Enter()
@@ -60,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
         hasMoved = UnitCore.MoveIfKeyPressed(KeyCode.RightArrow, _rigidBody, new Vector2(walkForce * jumpFudge, 0.0f), hasMoved, ref _forceThisFrame);
         UnitCore.MoveIfKeyPressed(KeyCode.LeftArrow, _rigidBody, new Vector2(-walkForce * jumpFudge, 0.0f), hasMoved, ref _forceThisFrame);
         UnitCore.OrientUnitBasedOnXVelocity(visualRoot, _rigidBody);
-        UnitCore.ChangeStateIfTrue(_onGround, _fsm, PlayerStates.OnGround);
+        UnitCore.ChangeStateIfTrue(_onGround, _fsm, MoveStates.OnGround);
     }
 
 

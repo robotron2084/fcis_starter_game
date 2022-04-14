@@ -20,11 +20,18 @@ namespace Code
             if (Input.GetKey(keyCode))
             {
                 force = forceToApply;
+                MoveUnit(rBod, force);
                 return true;
             }
             return false;
         }
+
+        public static void MoveUnit(Rigidbody2D rBod, Vector2 force)
+        {
+            rBod.AddForce(force);
+        }
         
+
         public static void OrientUnitBasedOnXVelocity(Transform transform, Rigidbody2D rBod)
         {
             Vector3 scale = transform.localScale;
@@ -50,6 +57,26 @@ namespace Code
             {
                 fsm.ChangeState(newState);
             }
+        }
+
+        public static int TakeDamage(int unitHealth, int amount, EnemyFsm<UnitHealth.HealthStates> fsm)
+        {
+            if (unitHealth == 0)
+            {
+                return unitHealth;
+            }
+            unitHealth -= amount;
+            unitHealth = Math.Min(0, unitHealth);
+            if (unitHealth == 0)
+            {
+                fsm.ChangeState(UnitHealth.HealthStates.Dead);
+            }
+            return unitHealth;
+        }
+
+        public static float FlipDirection(bool hitSides, float direction)
+        {
+            return hitSides ? -direction : direction;
         }
     }
 }
